@@ -7,10 +7,9 @@
 #include <ros/package.h>
 
 #include <cctype>
+#include <cstdarg>
+#include <cstdio>
 #include <fstream>
-
-#include <stdarg.h>
-#include <stdio.h>
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -145,10 +144,6 @@ void ParseContext::setEnvironment(const std::string& name, const std::string& va
 LaunchConfig::LaunchConfig()
  : m_rootContext(this)
  , m_anonGen(std::random_device()())
-{
-}
-
-LaunchConfig::~LaunchConfig()
 {
 }
 
@@ -465,7 +460,7 @@ void LaunchConfig::parseParam(TiXmlElement* element, ParseContext ctx)
 						close(pipe_fd[1]);
 					}
 
-					char* argp[] = {strdup("sh"), strdup("-c"), strdup(fullCommand.c_str()), NULL};
+					char* argp[] = {strdup("sh"), strdup("-c"), strdup(fullCommand.c_str()), nullptr};
 
 					execvp("sh", argp); // should never return
 					throw error("Could not execvp '%s': %s", fullCommand.c_str(), strerror(errno));
@@ -483,7 +478,7 @@ void LaunchConfig::parseParam(TiXmlElement* element, ParseContext ctx)
 					FD_ZERO(&fds);
 					FD_SET(pipe_fd[0], &fds);
 
-					int ret = select(pipe_fd[0]+1, &fds, 0, 0, &timeout);
+					int ret = select(pipe_fd[0]+1, &fds, nullptr, nullptr, &timeout);
 					if(ret < 0)
 						throw error("Could not select(): %s", strerror(errno));
 
